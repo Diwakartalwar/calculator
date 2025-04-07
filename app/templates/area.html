@@ -1,0 +1,186 @@
+{% extends 'base.html' %}
+
+{% block title %}Area Calculator{% endblock %}
+
+{% block page_title %}Area Calculator{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-body">
+        <form id="areaForm">
+            <div class="mb-3">
+                <label for="shape" class="form-label">Select Shape</label>
+                <select class="form-select" id="shape" onchange="showShapeFields()">
+                    <option value="rectangle">Rectangle</option>
+                    <option value="triangle">Triangle</option>
+                    <option value="circle">Circle</option>
+                    <option value="square">Square</option>
+                </select>
+            </div>
+
+            <!-- Rectangle Fields -->
+            <div id="rectangleFields" class="shape-fields">
+                <div class="mb-3">
+                    <label for="length" class="form-label">Length</label>
+                    <input type="number" class="form-control" id="length" step="any">
+                </div>
+                <div class="mb-3">
+                    <label for="width" class="form-label">Width</label>
+                    <input type="number" class="form-control" id="width" step="any">
+                </div>
+            </div>
+
+            <!-- Triangle Fields -->
+            <div id="triangleFields" class="shape-fields d-none">
+                <div class="mb-3">
+                    <label for="base" class="form-label">Base</label>
+                    <input type="number" class="form-control" id="base" step="any">
+                </div>
+                <div class="mb-3">
+                    <label for="height" class="form-label">Height</label>
+                    <input type="number" class="form-control" id="height" step="any">
+                </div>
+            </div>
+
+            <!-- Circle Fields -->
+            <div id="circleFields" class="shape-fields d-none">
+                <div class="mb-3">
+                    <label for="radius" class="form-label">Radius</label>
+                    <input type="number" class="form-control" id="radius" step="any">
+                </div>
+            </div>
+
+            <!-- Square Fields -->
+            <div id="squareFields" class="shape-fields d-none">
+                <div class="mb-3">
+                    <label for="side" class="form-label">Side Length</label>
+                    <input type="number" class="form-control" id="side" step="any">
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="area" class="form-label">Area</label>
+                <div class="input-group">
+                    <input type="number" class="form-control" id="area" readonly>
+                    <select class="form-select" id="areaUnit">
+                        <option value="m2">Square Meters (m²)</option>
+                        <option value="cm2">Square Centimeters (cm²)</option>
+                        <option value="km2">Square Kilometers (km²)</option>
+                        <option value="ft2">Square Feet (ft²)</option>
+                        <option value="in2">Square Inches (in²)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="d-grid gap-2">
+                <button type="button" class="btn btn-primary" onclick="calculateArea()">
+                    <i class="bi bi-calculator me-1"></i>Calculate Area
+                </button>
+                <button type="button" class="btn btn-danger" onclick="clearForm()">
+                    <i class="bi bi-x-circle me-1"></i>Clear
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function showShapeFields() {
+        const shape = document.getElementById('shape').value;
+        document.querySelectorAll('.shape-fields').forEach(field => {
+            field.classList.add('d-none');
+        });
+        document.getElementById(shape + 'Fields').classList.remove('d-none');
+    }
+
+    function convertArea(area, fromUnit, toUnit) {
+        // Convert to square meters first
+        let m2;
+        switch(fromUnit) {
+            case 'm2': m2 = area; break;
+            case 'cm2': m2 = area / 10000; break;
+            case 'km2': m2 = area * 1000000; break;
+            case 'ft2': m2 = area * 0.092903; break;
+            case 'in2': m2 = area * 0.00064516; break;
+            default: m2 = area;
+        }
+
+        // Convert from square meters to target unit
+        switch(toUnit) {
+            case 'm2': return m2;
+            case 'cm2': return m2 * 10000;
+            case 'km2': return m2 / 1000000;
+            case 'ft2': return m2 / 0.092903;
+            case 'in2': return m2 / 0.00064516;
+            default: return m2;
+        }
+    }
+
+    function calculateArea() {
+        const shape = document.getElementById('shape').value;
+        const unit = document.getElementById('areaUnit').value;
+        let area = 0;
+
+        switch(shape) {
+            case 'rectangle':
+                const length = parseFloat(document.getElementById('length').value);
+                const width = parseFloat(document.getElementById('width').value);
+                if (isNaN(length) || isNaN(width)) {
+                    alert('Please enter valid dimensions');
+                    return;
+                }
+                area = length * width;
+                break;
+
+            case 'triangle':
+                const base = parseFloat(document.getElementById('base').value);
+                const height = parseFloat(document.getElementById('height').value);
+                if (isNaN(base) || isNaN(height)) {
+                    alert('Please enter valid dimensions');
+                    return;
+                }
+                area = (base * height) / 2;
+                break;
+
+            case 'circle':
+                const radius = parseFloat(document.getElementById('radius').value);
+                if (isNaN(radius)) {
+                    alert('Please enter a valid radius');
+                    return;
+                }
+                area = Math.PI * radius * radius;
+                break;
+
+            case 'square':
+                const side = parseFloat(document.getElementById('side').value);
+                if (isNaN(side)) {
+                    alert('Please enter a valid side length');
+                    return;
+                }
+                area = side * side;
+                break;
+        }
+
+        // Convert to selected unit
+        const convertedArea = convertArea(area, 'm2', unit);
+        document.getElementById('area').value = convertedArea.toFixed(2);
+    }
+
+    function clearForm() {
+        document.getElementById('length').value = '';
+        document.getElementById('width').value = '';
+        document.getElementById('base').value = '';
+        document.getElementById('height').value = '';
+        document.getElementById('radius').value = '';
+        document.getElementById('side').value = '';
+        document.getElementById('area').value = '';
+    }
+
+    // Show rectangle fields by default
+    document.addEventListener('DOMContentLoaded', function() {
+        showShapeFields();
+    });
+</script>
+{% endblock %} 

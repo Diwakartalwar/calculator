@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+
+{% block title %}BMI Calculator{% endblock %}
+
+{% block page_title %}BMI Calculator{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-body">
+        <form id="bmiForm">
+            <div class="mb-3">
+                <label for="weight" class="form-label">Weight</label>
+                <div class="input-group">
+                    <input type="number" class="form-control" id="weight" step="any">
+                    <select class="form-select" id="weightUnit">
+                        <option value="kg">Kilograms (kg)</option>
+                        <option value="lb">Pounds (lb)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="height" class="form-label">Height</label>
+                <div class="input-group">
+                    <input type="number" class="form-control" id="height" step="any">
+                    <select class="form-select" id="heightUnit">
+                        <option value="cm">Centimeters (cm)</option>
+                        <option value="m">Meters (m)</option>
+                        <option value="ft">Feet (ft)</option>
+                        <option value="in">Inches (in)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="bmi" class="form-label">BMI</label>
+                <input type="text" class="form-control" id="bmi" readonly>
+            </div>
+            <div class="mb-3">
+                <label for="category" class="form-label">Category</label>
+                <input type="text" class="form-control" id="category" readonly>
+            </div>
+            <div class="d-grid gap-2">
+                <button type="button" class="btn btn-primary" onclick="calculateBMI()">
+                    <i class="bi bi-calculator me-1"></i>Calculate BMI
+                </button>
+                <button type="button" class="btn btn-danger" onclick="clearForm()">
+                    <i class="bi bi-x-circle me-1"></i>Clear
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function calculateBMI() {
+        const weight = parseFloat(document.getElementById('weight').value);
+        const height = parseFloat(document.getElementById('height').value);
+        const weightUnit = document.getElementById('weightUnit').value;
+        const heightUnit = document.getElementById('heightUnit').value;
+
+        if (isNaN(weight) || isNaN(height)) {
+            alert('Please enter valid weight and height');
+            return;
+        }
+
+        // Convert weight to kg
+        let weightKg = weight;
+        if (weightUnit === 'lb') {
+            weightKg = weight * 0.453592;
+        }
+
+        // Convert height to meters
+        let heightM = height;
+        switch(heightUnit) {
+            case 'cm': heightM = height / 100; break;
+            case 'ft': heightM = height * 0.3048; break;
+            case 'in': heightM = height * 0.0254; break;
+        }
+
+        const bmi = weightKg / (heightM * heightM);
+        document.getElementById('bmi').value = bmi.toFixed(2);
+
+        // Determine category
+        let category = '';
+        if (bmi < 18.5) {
+            category = 'Underweight';
+        } else if (bmi < 25) {
+            category = 'Normal weight';
+        } else if (bmi < 30) {
+            category = 'Overweight';
+        } else {
+            category = 'Obese';
+        }
+        document.getElementById('category').value = category;
+    }
+
+    function clearForm() {
+        document.getElementById('weight').value = '';
+        document.getElementById('height').value = '';
+        document.getElementById('bmi').value = '';
+        document.getElementById('category').value = '';
+    }
+</script>
+{% endblock %} 

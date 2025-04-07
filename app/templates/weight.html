@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block title %}Weight Calculator{% endblock %}
+
+{% block page_title %}Weight Calculator{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-body">
+        <form id="weightForm">
+            <div class="mb-3">
+                <label for="weight" class="form-label">Weight</label>
+                <div class="input-group">
+                    <input type="number" class="form-control" id="weight" step="any">
+                    <select class="form-select" id="fromUnit">
+                        <option value="kg">Kilograms (kg)</option>
+                        <option value="g">Grams (g)</option>
+                        <option value="lb">Pounds (lb)</option>
+                        <option value="oz">Ounces (oz)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="convertedWeight" class="form-label">Converted Weight</label>
+                <div class="input-group">
+                    <input type="number" class="form-control" id="convertedWeight" readonly>
+                    <select class="form-select" id="toUnit">
+                        <option value="kg">Kilograms (kg)</option>
+                        <option value="g">Grams (g)</option>
+                        <option value="lb">Pounds (lb)</option>
+                        <option value="oz">Ounces (oz)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="d-grid gap-2">
+                <button type="button" class="btn btn-primary" onclick="convertWeight()">
+                    <i class="bi bi-arrow-left-right me-1"></i>Convert
+                </button>
+                <button type="button" class="btn btn-danger" onclick="clearForm()">
+                    <i class="bi bi-x-circle me-1"></i>Clear
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function convertWeight() {
+        const weight = parseFloat(document.getElementById('weight').value);
+        const fromUnit = document.getElementById('fromUnit').value;
+        const toUnit = document.getElementById('toUnit').value;
+
+        if (isNaN(weight)) {
+            alert('Please enter a valid weight');
+            return;
+        }
+
+        // Convert to kilograms first
+        let kg;
+        switch(fromUnit) {
+            case 'kg': kg = weight; break;
+            case 'g': kg = weight / 1000; break;
+            case 'lb': kg = weight * 0.453592; break;
+            case 'oz': kg = weight * 0.0283495; break;
+        }
+
+        // Convert from kilograms to target unit
+        let converted;
+        switch(toUnit) {
+            case 'kg': converted = kg; break;
+            case 'g': converted = kg * 1000; break;
+            case 'lb': converted = kg / 0.453592; break;
+            case 'oz': converted = kg / 0.0283495; break;
+        }
+
+        document.getElementById('convertedWeight').value = converted.toFixed(2);
+    }
+
+    function clearForm() {
+        document.getElementById('weight').value = '';
+        document.getElementById('convertedWeight').value = '';
+    }
+</script>
+{% endblock %} 

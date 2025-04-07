@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block title %}Height Calculator{% endblock %}
+
+{% block page_title %}Height Calculator{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-body">
+        <form id="heightForm">
+            <div class="mb-3">
+                <label for="height" class="form-label">Height</label>
+                <div class="input-group">
+                    <input type="number" class="form-control" id="height" step="any">
+                    <select class="form-select" id="fromUnit">
+                        <option value="cm">Centimeters (cm)</option>
+                        <option value="m">Meters (m)</option>
+                        <option value="ft">Feet (ft)</option>
+                        <option value="in">Inches (in)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="convertedHeight" class="form-label">Converted Height</label>
+                <div class="input-group">
+                    <input type="number" class="form-control" id="convertedHeight" readonly>
+                    <select class="form-select" id="toUnit">
+                        <option value="cm">Centimeters (cm)</option>
+                        <option value="m">Meters (m)</option>
+                        <option value="ft">Feet (ft)</option>
+                        <option value="in">Inches (in)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="d-grid gap-2">
+                <button type="button" class="btn btn-primary" onclick="convertHeight()">
+                    <i class="bi bi-arrow-left-right me-1"></i>Convert
+                </button>
+                <button type="button" class="btn btn-danger" onclick="clearForm()">
+                    <i class="bi bi-x-circle me-1"></i>Clear
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function convertHeight() {
+        const height = parseFloat(document.getElementById('height').value);
+        const fromUnit = document.getElementById('fromUnit').value;
+        const toUnit = document.getElementById('toUnit').value;
+
+        if (isNaN(height)) {
+            alert('Please enter a valid height');
+            return;
+        }
+
+        // Convert to centimeters first
+        let cm;
+        switch(fromUnit) {
+            case 'cm': cm = height; break;
+            case 'm': cm = height * 100; break;
+            case 'ft': cm = height * 30.48; break;
+            case 'in': cm = height * 2.54; break;
+        }
+
+        // Convert from centimeters to target unit
+        let converted;
+        switch(toUnit) {
+            case 'cm': converted = cm; break;
+            case 'm': converted = cm / 100; break;
+            case 'ft': converted = cm / 30.48; break;
+            case 'in': converted = cm / 2.54; break;
+        }
+
+        document.getElementById('convertedHeight').value = converted.toFixed(2);
+    }
+
+    function clearForm() {
+        document.getElementById('height').value = '';
+        document.getElementById('convertedHeight').value = '';
+    }
+</script>
+{% endblock %} 

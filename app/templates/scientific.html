@@ -1,0 +1,214 @@
+{% extends 'base.html' %}
+
+{% block title %}Scientific Calculator{% endblock %}
+
+{% block page_title %}Scientific Calculator{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-body">
+        <form id="calculatorForm">
+            <div class="mb-3">
+                <label for="display" class="form-label">Result</label>
+                <div class="input-group">
+                    <input type="text" class="form-control form-control-lg text-end" id="display" readonly>
+                    <button type="button" class="btn btn-outline-danger" onclick="clearDisplay()">
+                        <i class="bi bi-x-circle"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="row g-2">
+                <div class="col-2">
+                    <button type="button" class="btn btn-light w-100" onclick="appendToDisplay('Math.sin(')">sin</button>
+                </div>
+                <div class="col-2">
+                    <button type="button" class="btn btn-light w-100" onclick="appendToDisplay('Math.cos(')">cos</button>
+                </div>
+                <div class="col-2">
+                    <button type="button" class="btn btn-light w-100" onclick="appendToDisplay('Math.tan(')">tan</button>
+                </div>
+                <div class="col-2">
+                    <button type="button" class="btn btn-light w-100" onclick="appendToDisplay('Math.log10(')">log</button>
+                </div>
+                <div class="col-2">
+                    <button type="button" class="btn btn-light w-100" onclick="appendToDisplay('Math.log(')">ln</button>
+                </div>
+                <div class="col-2">
+                    <button type="button" class="btn btn-info w-100" onclick="appendToDisplay('/')">
+                        <i class="bi bi-slash"></i>
+                    </button>
+                </div>
+                <div class="col-2">
+                    <button type="button" class="btn btn-light w-100" onclick="appendToDisplay('7')">7</button>
+                </div>
+                <div class="col-2">
+                    <button type="button" class="btn btn-light w-100" onclick="appendToDisplay('8')">8</button>
+                </div>
+                <div class="col-2">
+                    <button type="button" class="btn btn-light w-100" onclick="appendToDisplay('9')">9</button>
+                </div>
+                <div class="col-2">
+                    <button type="button" class="btn btn-light w-100" onclick="appendToDisplay('Math.sqrt(')">√</button>
+                </div>
+                <div class="col-2">
+                    <button type="button" class="btn btn-light w-100" onclick="appendToDisplay('**')">^</button>
+                </div>
+                <div class="col-2">
+                    <button type="button" class="btn btn-info w-100" onclick="appendToDisplay('*')">
+                        <i class="bi bi-x"></i>
+                    </button>
+                </div>
+                <div class="col-2">
+                    <button type="button" class="btn btn-light w-100" onclick="appendToDisplay('4')">4</button>
+                </div>
+                <div class="col-2">
+                    <button type="button" class="btn btn-light w-100" onclick="appendToDisplay('5')">5</button>
+                </div>
+                <div class="col-2">
+                    <button type="button" class="btn btn-light w-100" onclick="appendToDisplay('6')">6</button>
+                </div>
+                <div class="col-2">
+                    <button type="button" class="btn btn-light w-100" onclick="appendToDisplay('(')">(</button>
+                </div>
+                <div class="col-2">
+                    <button type="button" class="btn btn-light w-100" onclick="appendToDisplay(')')">)</button>
+                </div>
+                <div class="col-2">
+                    <button type="button" class="btn btn-info w-100" onclick="appendToDisplay('-')">
+                        <i class="bi bi-dash"></i>
+                    </button>
+                </div>
+                <div class="col-2">
+                    <button type="button" class="btn btn-light w-100" onclick="appendToDisplay('1')">1</button>
+                </div>
+                <div class="col-2">
+                    <button type="button" class="btn btn-light w-100" onclick="appendToDisplay('2')">2</button>
+                </div>
+                <div class="col-2">
+                    <button type="button" class="btn btn-light w-100" onclick="appendToDisplay('3')">3</button>
+                </div>
+                <div class="col-2">
+                    <button type="button" class="btn btn-light w-100" onclick="appendToDisplay('factorial(')">!</button>
+                </div>
+                <div class="col-2">
+                    <button type="button" class="btn btn-light w-100" onclick="appendToDisplay('/100')">%</button>
+                </div>
+                <div class="col-2">
+                    <button type="button" class="btn btn-info w-100" onclick="appendToDisplay('+')">
+                        <i class="bi bi-plus"></i>
+                    </button>
+                </div>
+                <div class="col-2">
+                    <button type="button" class="btn btn-light w-100" onclick="appendToDisplay('0')">0</button>
+                </div>
+                <div class="col-2">
+                    <button type="button" class="btn btn-light w-100" onclick="appendToDisplay('.')">.</button>
+                </div>
+                <div class="col-2">
+                    <button type="button" class="btn btn-light w-100" onclick="backspace()">
+                        <i class="bi bi-backspace"></i>
+                    </button>
+                </div>
+                <div class="col-2">
+                    <button type="button" class="btn btn-light w-100" onclick="appendToDisplay('Math.PI')">π</button>
+                </div>
+                <div class="col-2">
+                    <button type="button" class="btn btn-light w-100" onclick="appendToDisplay('Math.E')">e</button>
+                </div>
+                <div class="col-2">
+                    <button type="button" class="btn btn-light w-100" onclick="appendToDisplay('Math.abs(')">|x|</button>
+                </div>
+                <div class="col-12">
+                    <button type="button" class="btn btn-primary w-100" onclick="calculate()">
+                        <i class="bi bi-equals"></i> Calculate
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let lastResult = null;
+    let isNewCalculation = true;
+
+    function factorial(n) {
+        if (n < 0) return NaN;
+        if (n === 0 || n === 1) return 1;
+        let result = 1;
+        for (let i = 2; i <= n; i++) {
+            result *= i;
+        }
+        return result;
+    }
+
+    function appendToDisplay(value) {
+        const display = document.getElementById('display');
+        
+        if (isNewCalculation) {
+            if (['+', '-', '*', '/'].includes(value)) {
+                display.value = lastResult + value;
+            } else {
+                display.value = '';
+            }
+            isNewCalculation = false;
+        }
+        
+        display.value += value;
+    }
+
+    function clearDisplay() {
+        document.getElementById('display').value = '';
+        lastResult = null;
+        isNewCalculation = true;
+    }
+
+    function backspace() {
+        const display = document.getElementById('display');
+        display.value = display.value.slice(0, -1);
+    }
+
+    function calculate() {
+        try {
+            const display = document.getElementById('display');
+            let expression = display.value;
+            
+            // Replace × with * and ÷ with / for proper evaluation
+            expression = expression.replace(/×/g, '*').replace(/÷/g, '/');
+            
+            // Handle factorial
+            expression = expression.replace(/factorial\((\d+)\)/g, (match, n) => factorial(parseInt(n)));
+            
+            // Use Function constructor to safely evaluate the expression
+            const result = new Function('return ' + expression)();
+            
+            if (isFinite(result)) {
+                display.value = result;
+                lastResult = result;
+                isNewCalculation = true;
+            } else {
+                display.value = 'Error';
+            }
+        } catch (error) {
+            document.getElementById('display').value = 'Error';
+        }
+    }
+
+    // Add keyboard support
+    document.addEventListener('keydown', function(event) {
+        const key = event.key;
+        
+        if (/[0-9+\-*/.()]/.test(key)) {
+            appendToDisplay(key);
+        } else if (key === 'Enter') {
+            calculate();
+        } else if (key === 'Backspace') {
+            backspace();
+        } else if (key === 'Escape') {
+            clearDisplay();
+        }
+    });
+</script>
+{% endblock %} 

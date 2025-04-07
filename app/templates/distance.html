@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block title %}Distance Calculator{% endblock %}
+
+{% block page_title %}Distance Calculator{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-body">
+        <form id="distanceForm">
+            <div class="mb-3">
+                <label for="distance" class="form-label">Distance</label>
+                <div class="input-group">
+                    <input type="number" class="form-control" id="distance" step="any">
+                    <select class="form-select" id="fromUnit">
+                        <option value="km">Kilometers (km)</option>
+                        <option value="m">Meters (m)</option>
+                        <option value="cm">Centimeters (cm)</option>
+                        <option value="mi">Miles (mi)</option>
+                        <option value="yd">Yards (yd)</option>
+                        <option value="ft">Feet (ft)</option>
+                        <option value="in">Inches (in)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="convertedDistance" class="form-label">Converted Distance</label>
+                <div class="input-group">
+                    <input type="number" class="form-control" id="convertedDistance" readonly>
+                    <select class="form-select" id="toUnit">
+                        <option value="km">Kilometers (km)</option>
+                        <option value="m">Meters (m)</option>
+                        <option value="cm">Centimeters (cm)</option>
+                        <option value="mi">Miles (mi)</option>
+                        <option value="yd">Yards (yd)</option>
+                        <option value="ft">Feet (ft)</option>
+                        <option value="in">Inches (in)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="d-grid gap-2">
+                <button type="button" class="btn btn-primary" onclick="convertDistance()">
+                    <i class="bi bi-arrow-left-right me-1"></i>Convert
+                </button>
+                <button type="button" class="btn btn-danger" onclick="clearForm()">
+                    <i class="bi bi-x-circle me-1"></i>Clear
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function convertDistance() {
+        const distance = parseFloat(document.getElementById('distance').value);
+        const fromUnit = document.getElementById('fromUnit').value;
+        const toUnit = document.getElementById('toUnit').value;
+
+        if (isNaN(distance)) {
+            alert('Please enter a valid distance');
+            return;
+        }
+
+        // Convert to meters first
+        let m;
+        switch(fromUnit) {
+            case 'km': m = distance * 1000; break;
+            case 'm': m = distance; break;
+            case 'cm': m = distance / 100; break;
+            case 'mi': m = distance * 1609.34; break;
+            case 'yd': m = distance * 0.9144; break;
+            case 'ft': m = distance * 0.3048; break;
+            case 'in': m = distance * 0.0254; break;
+        }
+
+        // Convert from meters to target unit
+        let converted;
+        switch(toUnit) {
+            case 'km': converted = m / 1000; break;
+            case 'm': converted = m; break;
+            case 'cm': converted = m * 100; break;
+            case 'mi': converted = m / 1609.34; break;
+            case 'yd': converted = m / 0.9144; break;
+            case 'ft': converted = m / 0.3048; break;
+            case 'in': converted = m / 0.0254; break;
+        }
+
+        document.getElementById('convertedDistance').value = converted.toFixed(2);
+    }
+
+    function clearForm() {
+        document.getElementById('distance').value = '';
+        document.getElementById('convertedDistance').value = '';
+    }
+</script>
+{% endblock %} 

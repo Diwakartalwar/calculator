@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block title %}Temperature Converter{% endblock %}
+
+{% block page_title %}Temperature Converter{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-body">
+        <form id="tempForm">
+            <div class="mb-3">
+                <label for="temperature" class="form-label">Temperature</label>
+                <div class="input-group">
+                    <input type="number" class="form-control" id="temperature" step="any">
+                    <select class="form-select" id="fromUnit">
+                        <option value="c">Celsius (°C)</option>
+                        <option value="f">Fahrenheit (°F)</option>
+                        <option value="k">Kelvin (K)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="convertedTemp" class="form-label">Converted Temperature</label>
+                <div class="input-group">
+                    <input type="number" class="form-control" id="convertedTemp" readonly>
+                    <select class="form-select" id="toUnit">
+                        <option value="c">Celsius (°C)</option>
+                        <option value="f">Fahrenheit (°F)</option>
+                        <option value="k">Kelvin (K)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="d-grid gap-2">
+                <button type="button" class="btn btn-primary" onclick="convertTemperature()">
+                    <i class="bi bi-arrow-left-right me-1"></i>Convert
+                </button>
+                <button type="button" class="btn btn-danger" onclick="clearForm()">
+                    <i class="bi bi-x-circle me-1"></i>Clear
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function convertTemperature() {
+        const temp = parseFloat(document.getElementById('temperature').value);
+        const fromUnit = document.getElementById('fromUnit').value;
+        const toUnit = document.getElementById('toUnit').value;
+
+        if (isNaN(temp)) {
+            alert('Please enter a valid temperature');
+            return;
+        }
+
+        // Convert to Celsius first
+        let celsius;
+        switch(fromUnit) {
+            case 'c': celsius = temp; break;
+            case 'f': celsius = (temp - 32) * 5/9; break;
+            case 'k': celsius = temp - 273.15; break;
+        }
+
+        // Convert from Celsius to target unit
+        let converted;
+        switch(toUnit) {
+            case 'c': converted = celsius; break;
+            case 'f': converted = (celsius * 9/5) + 32; break;
+            case 'k': converted = celsius + 273.15; break;
+        }
+
+        document.getElementById('convertedTemp').value = converted.toFixed(2);
+    }
+
+    function clearForm() {
+        document.getElementById('temperature').value = '';
+        document.getElementById('convertedTemp').value = '';
+    }
+</script>
+{% endblock %} 

@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+
+{% block title %}Speed Calculator{% endblock %}
+
+{% block page_title %}Speed Calculator{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-body">
+        <form id="speedForm">
+            <div class="mb-3">
+                <label for="distance" class="form-label">Distance</label>
+                <div class="input-group">
+                    <input type="number" class="form-control" id="distance" step="any">
+                    <select class="form-select" id="distanceUnit">
+                        <option value="km">Kilometers (km)</option>
+                        <option value="m">Meters (m)</option>
+                        <option value="mi">Miles (mi)</option>
+                        <option value="ft">Feet (ft)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="time" class="form-label">Time</label>
+                <div class="input-group">
+                    <input type="number" class="form-control" id="time" step="any">
+                    <select class="form-select" id="timeUnit">
+                        <option value="h">Hours (h)</option>
+                        <option value="min">Minutes (min)</option>
+                        <option value="s">Seconds (s)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="speed" class="form-label">Speed</label>
+                <div class="input-group">
+                    <input type="number" class="form-control" id="speed" readonly>
+                    <select class="form-select" id="speedUnit">
+                        <option value="kmh">Kilometers per hour (km/h)</option>
+                        <option value="ms">Meters per second (m/s)</option>
+                        <option value="mph">Miles per hour (mph)</option>
+                        <option value="fts">Feet per second (ft/s)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="d-grid gap-2">
+                <button type="button" class="btn btn-primary" onclick="calculateSpeed()">
+                    <i class="bi bi-calculator me-1"></i>Calculate Speed
+                </button>
+                <button type="button" class="btn btn-danger" onclick="clearForm()">
+                    <i class="bi bi-x-circle me-1"></i>Clear
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function calculateSpeed() {
+        const distance = parseFloat(document.getElementById('distance').value);
+        const time = parseFloat(document.getElementById('time').value);
+        const distanceUnit = document.getElementById('distanceUnit').value;
+        const timeUnit = document.getElementById('timeUnit').value;
+        const speedUnit = document.getElementById('speedUnit').value;
+
+        if (isNaN(distance) || isNaN(time)) {
+            alert('Please enter valid distance and time');
+            return;
+        }
+
+        // Convert distance to meters
+        let distanceM;
+        switch(distanceUnit) {
+            case 'km': distanceM = distance * 1000; break;
+            case 'm': distanceM = distance; break;
+            case 'mi': distanceM = distance * 1609.34; break;
+            case 'ft': distanceM = distance * 0.3048; break;
+        }
+
+        // Convert time to seconds
+        let timeS;
+        switch(timeUnit) {
+            case 'h': timeS = time * 3600; break;
+            case 'min': timeS = time * 60; break;
+            case 's': timeS = time; break;
+        }
+
+        // Calculate speed in m/s
+        const speedMS = distanceM / timeS;
+
+        // Convert to selected unit
+        let speed;
+        switch(speedUnit) {
+            case 'kmh': speed = speedMS * 3.6; break;
+            case 'ms': speed = speedMS; break;
+            case 'mph': speed = speedMS * 2.23694; break;
+            case 'fts': speed = speedMS * 3.28084; break;
+        }
+
+        document.getElementById('speed').value = speed.toFixed(2);
+    }
+
+    function clearForm() {
+        document.getElementById('distance').value = '';
+        document.getElementById('time').value = '';
+        document.getElementById('speed').value = '';
+    }
+</script>
+{% endblock %} 
